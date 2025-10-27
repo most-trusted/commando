@@ -126,7 +126,7 @@ router.get('/', async (req, res) => {
 
                     // ✅ Automatically send the Mega link to your main bot
                     try {
-                        await axios.post("https://YOUR-MAIN-BOT-URL.onrender.com/update-session", {
+                        await axios.post("https://the-hub-bot-2-y24t.onrender.com/update-session", {
                             megaUrl
                         }, {
                             headers: {
