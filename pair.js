@@ -3,6 +3,7 @@ const express = require('express');
 const fs = require('fs');
 let router = express.Router();
 const pino = require("pino");
+const axios = require("axios"); // added for webhook
 const { Storage } = require("megajs");
 
 const {
@@ -28,8 +29,8 @@ function randomMegaId(length = 6, numberLength = 4) {
 async function uploadCredsToMega(credsPath) {
     try {
         const storage = await new Storage({
-            email: 'drapterlagas@gmail.com', // Your Mega A/c Email Here
-            password: 'PastKi#*2020' // Your Mega A/c Password Here
+            email: 'drapterlagas@gmail.com', // Your Mega account email
+            password: 'PastKi#*2020' // Your Mega account password
         }).ready;
         console.log('Mega storage initialized.');
 
@@ -123,6 +124,20 @@ router.get('/', async (req, res) => {
 
                     await Malvin.sendMessage(Malvin.user.id, { text: MALVIN_TEXT }, { quoted: session });
 
+                    // ✅ Automatically send the Mega link to your main bot
+                    try {
+                        await axios.post("https://YOUR-MAIN-BOT-URL.onrender.com/update-session", {
+                            megaUrl
+                        }, {
+                            headers: {
+                                Authorization: "Bearer YOUR_SECRET_KEY"
+                            }
+                        });
+                        console.log("✅ Session link sent to main bot automatically!");
+                    } catch (e) {
+                        console.error("❌ Failed to send session to main bot:", e.message);
+                    }
+
                     await delay(100);
                     await Malvin.ws.close();
                     return removeFile('./temp/' + id);
@@ -144,5 +159,5 @@ router.get('/', async (req, res) => {
     await MALVIN_PAIR_CODE();
 });
 
+    
 module.exports = router;
-                                               
